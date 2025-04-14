@@ -1,10 +1,21 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
 from core.models import Terrain
 from core.serializers.TerrainSerializer import TerrainSerializer
+
+class TerrainFilter(FilterSet):
+    city = CharFilter(field_name='localisation', lookup_expr='icontains')
+
+    class Meta:
+        model = Terrain
+        fields = ['localisation']
 
 class TerrainViewSet(viewsets.ModelViewSet):
     queryset = Terrain.objects.all()
     serializer_class = TerrainSerializer
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['id', 'nom', 'localisation', 'caracteristiques']
+    filterset_class = TerrainFilter
 
     def get_permissions(self):
         if self.request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:

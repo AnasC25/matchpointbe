@@ -1,8 +1,9 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from core.models import Order
-from core.serializers.OrderSerializer import OrderSerializer
+from core.models import Order, OrderItem, Equipment
+from core.serializers.OrderSerializer import OrderSerializer, OrderDetailSerializer
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
@@ -13,11 +14,36 @@ class OrderViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """ Retourne les commandes de l'utilisateur. """
+        """ Retourne les commandes de l'utilisateur ou toutes si admin """
+        if self.request.user.is_staff:
+            return Order.objects.all()
         return Order.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        data = self.request.data
+        products = data.get('products', [])
+
+        if not products:
+            raise serializers.ValidationError("La liste des produits ne peut pas être vide")
+
+        order = serializer.save(user=self.request.user)
+
+        for product_data in products:
+            product_id = product_data.get('productId')
+            quantity = product_data.get('quantity')
+
+            if not product_id or not quantity:
+                continue
+
+            product = Equipment.objects.get(id=product_id)
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=quantity,
+                price=product.price
+            )
+
+        order.calculate_total_price()
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
@@ -29,7 +55,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     def details(self, request, *args, **kwargs):
         """ Affiche les détails de la commande. """
         instance = self.get_object()
-        serializer = OrderDetailSerializer(instance)  
+        serializer = OrderDetailSerializer(instance)
         return Response(serializer.data)
 
     @action(detail=True, methods=['post'])
@@ -42,7 +68,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def confirm(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.status = 'processing'  # Changé de 'confirmed' à 'processing' pour correspondre aux STATUS_CHOICES
+        instance.status = 'processing'
         instance.save()
         return Response({'message': 'Commande confirmée'})
 
@@ -67,27 +93,59 @@ class OrderViewSet(viewsets.ModelViewSet):
         instance.save()
         return Response({'message': 'Commande livrée'})
 
-    @action(detail=True, methods=['post'])
-    def refund(self, request, *args, **kwargs):
-        # Suppression de cette méthode car 'refunded' n'est pas dans STATUS_CHOICES
-        return Response({'message': 'Action non disponible'}, status=400)
-
     @action(detail=False, methods=['post'], url_path='create-order')
     def create_order(self, request):
         try:
-            # Ajoutez automatiquement l'utilisateur aux données
-            data = request.data.copy()
-            data['user'] = request.user.id
-            
-            serializer = OrderSerializer(data=data)
+            products = request.data.get('products', [])
+            if not products:
+                return Response(
+                    {'status': 'error', 'message': 'La liste des produits ne peut pas être vide'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            for product_data in products:
+                if 'productId' not in product_data or 'quantity' not in product_data:
+                    return Response(
+                        {'status': 'error', 'message': 'Chaque produit doit avoir un productId et une quantity'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                product_id = product_data['productId']
+                quantity = product_data['quantity']
+
+                if quantity < 1:
+                    return Response(
+                        {'status': 'error', 'message': f'Quantité invalide pour le produit {product_id}'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                if not Equipment.objects.filter(id=product_id).exists():
+                    return Response(
+                        {'status': 'error', 'message': f'Produit avec ID {product_id} non trouvé'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+            serializer = OrderSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                order = serializer.save(user=request.user)
+
+                for product_data in products:
+                    product = Equipment.objects.get(id=product_data['productId'])
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=product_data['quantity'],
+                        price=product.price
+                    )
+
+                order.calculate_total_price()
+
                 return Response({
                     'status': 'success',
                     'message': 'Commande créée avec succès',
-                    'data': serializer.data
+                    'data': OrderSerializer(order).data
                 }, status=status.HTTP_201_CREATED)
-            
+
             return Response({
                 'status': 'error',
                 'message': 'Erreur de validation',

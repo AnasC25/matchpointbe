@@ -3,6 +3,8 @@ from django.utils.timezone import now
 from datetime import timedelta
 
 class Equipment(models.Model):
+    id = models.AutoField(primary_key=True)  # ID incrémental
+    sku = models.CharField(max_length=50, unique=True, blank=True, null=True)  # SKU du produit
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     quantity = models.IntegerField(default=1)
@@ -33,4 +35,4 @@ class Equipment(models.Model):
         return self.created_at >= now() - timedelta(days=30)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} - {self.name}"
