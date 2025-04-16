@@ -45,7 +45,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
         fields = ['id', 'user', 'terrain', 'start_time', 'end_time', 'status']
-        read_only_fields = ['user', 'status']
+        read_only_fields = ['user', 'status']  # L'utilisateur est automatiquement défini et le statut commence en 'pending'
 
     def validate_terrain(self, value):
         """
@@ -117,8 +117,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        """
-        Crée une nouvelle réservation en assignant automatiquement l'utilisateur connecté.
-        """
+        # Définir automatiquement l'utilisateur comme l'utilisateur connecté
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)

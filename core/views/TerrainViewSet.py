@@ -5,16 +5,17 @@ from core.serializers.TerrainSerializer import TerrainSerializer
 
 class TerrainFilter(FilterSet):
     city = CharFilter(field_name='localisation', lookup_expr='icontains')
+    discipline = CharFilter(field_name='discipline')
 
     class Meta:
         model = Terrain
-        fields = ['localisation']
+        fields = ['localisation', 'discipline']
 
 class TerrainViewSet(viewsets.ModelViewSet):
     queryset = Terrain.objects.all()
     serializer_class = TerrainSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['id', 'nom', 'localisation', 'caracteristiques']
+    search_fields = ['id', 'nom', 'localisation', 'caracteristiques', 'discipline']
     filterset_class = TerrainFilter
 
     def get_permissions(self):

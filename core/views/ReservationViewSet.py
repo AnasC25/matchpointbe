@@ -1,7 +1,6 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions
 from core.models import Reservation
-from core.serializers import ReservationSerializer
+from core.serializers.ReservationSerializer import ReservationSerializer
 
 class ReservationViewSet(viewsets.ModelViewSet):
     """
@@ -15,6 +14,13 @@ class ReservationViewSet(viewsets.ModelViewSet):
         serializer_class: Le serializer utilisé pour la sérialisation/désérialisation
         permission_classes: Seuls les utilisateurs authentifiés peuvent accéder à ces endpoints
     """
-    queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Un utilisateur ne peut voir que ses propres réservations
+        return Reservation.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # L'utilisateur est automatiquement défini dans le sérialiseur
+        serializer.save()

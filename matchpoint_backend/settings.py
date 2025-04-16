@@ -114,3 +114,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ✅ Clé par défaut pour les modèles
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Paramètres Django
+APPEND_SLASH = False

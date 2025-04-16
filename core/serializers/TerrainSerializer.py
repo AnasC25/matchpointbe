@@ -13,7 +13,7 @@ class TerrainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Terrain
-        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 'disponible']
+        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 'disponible', 'discipline']
         read_only_fields = []  # Aucun champ en lecture seule pour permettre la modification de l'ID
 
     def get_img_url(self, obj):
