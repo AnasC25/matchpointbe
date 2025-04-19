@@ -1,26 +1,20 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 
-# ✅ Utilisation de CustomUser comme modèle utilisateur
-AUTH_USER_MODEL = 'core.CustomUser'
-
-# ✅ Chemin de base du projet
+# ── 1. Chemin vers la racine du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ✅ Clé secrète (change-la en production)
-SECRET_KEY = 'django-insecure-*i#-e*kz!+2+kzi96hdo1jvchyspqhw9ezjx2xqrhcd7jk8#fv'
+# ── 2. Chargement du .env
+load_dotenv(BASE_DIR / '.env')
 
-# ✅ Mode Debug (⚠️ Mettre False en production)
-DEBUG = True
+# ── 3. Secret key et debug depuis l'env
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-dev-key')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True  # Éviter les erreurs CORS avec les cookies
-
-# ✅ Configuration des hôtes autorisés (à modifier en production)
-ALLOWED_HOSTS = []
-
-# ✅ Applications installées
+# ── 4. Applications installées
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,16 +22,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
-    'corsheaders',  # Ajout pour la gestion des CORS
+    'corsheaders',
+
     'core',
 ]
 
-# ✅ Middleware
+# ── 5. Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Doit être placé en haut
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -47,14 +43,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ✅ Fichier principal des URLs du projet
 ROOT_URLCONF = 'matchpoint_backend.urls'
 
-# ✅ Configuration des templates (nécessaire pour Django Admin)
+# ── 6. Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Ajoute des répertoires si besoin
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,7 +62,9 @@ TEMPLATES = [
     },
 ]
 
-# ✅ Django REST Framework & JWT
+WSGI_APPLICATION = 'matchpoint_backend.wsgi.application'
+
+# ── 7. Django REST Framework & JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -78,42 +75,41 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'your-secret-key',  # Change-moi en production
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',  # Assure que JWT récupère bien l'ID utilisateur
-    'USER_ID_CLAIM': 'user_id',
+    'ACCESS_TOKEN_LIFETIME':      timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME':     timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS':      True,
+    'BLACKLIST_AFTER_ROTATION':   True,
+    'ALGORITHM':                  'HS256',
+    'SIGNING_KEY':                os.getenv('JWT_SIGNING_KEY', 'your-dev-key'),
+    'AUTH_HEADER_TYPES':          ('Bearer',),
+    'USER_ID_FIELD':              'id',
+    'USER_ID_CLAIM':              'user_id',
 }
 
-# ✅ Base de données PostgreSQL
+# ── 8. Base de données
+load_dotenv()  # Charge les variables depuis .env
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'matchpoint',
-        'USER': 'anas',
-        'PASSWORD': 'Anas1234!',
-        'HOST': 'localhost',
-        'PORT': '5433',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
-
-# ✅ Internationalisation
+# ── 9. Internationalisation
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Fichiers statiques et médias
+# ── 10. Static & Media
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
-# ✅ Clé par défaut pour les modèles
+# ── 11. Autres
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Paramètres Django
 APPEND_SLASH = False

@@ -17,7 +17,7 @@ REST_FRAMEWORK = {
 
 # Configuration CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "https://bookish-space-carnival-v46qwgxr799fp64g-3000.app.github.dev/",
     # Ajoutez vos domaines autorisés
 ]
 
