@@ -1,3 +1,12 @@
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -14,14 +23,17 @@ REST_FRAMEWORK = {
         'user': '1000/day'
     }
 }
-
-# Configuration CORS
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
-    "https://bookish-space-carnival-v46qwgxr799fp64g-3000.app.github.dev/",
-    # Ajoutez vos domaines autorisés
+    "http://localhost:3000",
+    "https://bookish-space-carnival-v46qwgxr799fp64g-8000.app.github.dev"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "https://bookish-space-carnival-v46qwgxr799fp64g-8000.app.github.dev"
 ]
 
-AUTH_USER_MODEL = "core.CustomUser"
+CORS_ALLOW_CREDENTIALS = True
 
 APPEND_SLASH = True
 
@@ -34,6 +46,5 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.SlashMiddleware',  # Ajout du middleware personnalisé
+    'core.middleware.SlashMiddleware',  # Vérifie bien son existence
 ]
-

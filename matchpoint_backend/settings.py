@@ -3,6 +3,11 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
+# ✅ Utilisation de CustomUser comme modèle utilisateur
+AUTH_USER_MODEL = 'core.CustomUser'
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 # ── 1. Chemin vers la racine du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,12 +27,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
     'corsheaders',
-
     'core',
 ]
 
