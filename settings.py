@@ -29,14 +29,16 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://matchpointfront.vercel.app",
     "https://bookish-space-carnival-v46qwgxr799fp64g-8000.app.github.dev",
-    "http://ec2-44-201-157-94.compute-1.amazonaws.com"
+    "http://ec2-44-201-157-94.compute-1.amazonaws.com",
+    "https://api.matchpoint.ma"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://matchpointfront.vercel.app",
     "https://bookish-space-carnival-v46qwgxr799fp64g-8000.app.github.dev",
-    "http://ec2-44-201-157-94.compute-1.amazonaws.com"
+    "http://ec2-44-201-157-94.compute-1.amazonaws.com",
+    "https://api.matchpoint.ma"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
