@@ -28,8 +28,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     password2 = serializers.CharField(write_only=True, required=True)
     telephone = serializers.CharField(required=True)
-    niveau = serializers.ChoiceField(choices=NIVEAU_CHOICES, required=True)
-    societe = serializers.CharField(required=True)
+    niveau = serializers.ChoiceField(choices=NIVEAU_CHOICES, required=False)
+    societe = serializers.CharField(required=False)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
 
@@ -39,10 +39,10 @@ class RegisterSerializer(serializers.ModelSerializer):
                  'last_name', 'telephone', 'niveau', 'societe')
 
     def validate_telephone(self, value):
-        pattern = r'^6[0-9]{8}$'  # Numéro marocain valide : commence par 6 et contient 9 chiffres au total
+        pattern = r'^[67][0-9]{8}$'  # Numéro marocain valide : commence par 6 ou 7 et contient 9 chiffres au total
         if not re.match(pattern, value):
             raise serializers.ValidationError(
-                "Le numéro doit être au format valide (ex: 612345678)."
+                "Le numéro doit être au format valide (ex: 612345678 ou 712345678)."
             )
         return f"+212{value[-9:]}"  # On garde uniquement les 9 derniers chiffres et on ajoute +212
 
