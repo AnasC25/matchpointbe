@@ -7,12 +7,6 @@ import re
 CustomUser = get_user_model()  # Utiliser le modèle défini dans AUTH_USER_MODEL
 
 class RegisterSerializer(serializers.ModelSerializer):
-    NIVEAU_CHOICES = [
-        ('Debutant', 'Débutant'),
-        ('Intermediaire', 'Intermédiaire'),
-        ('Avance', 'Avancé')
-    ]
-
     username = serializers.CharField(
         required=True,
         validators=[UniqueValidator(queryset=CustomUser.objects.all())]
@@ -28,15 +22,13 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
     password2 = serializers.CharField(write_only=True, required=True)
     telephone = serializers.CharField(required=True)
-    niveau = serializers.ChoiceField(choices=NIVEAU_CHOICES, required=False)
-    societe = serializers.CharField(required=False)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
 
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'password', 'password2', 'first_name', 
-                 'last_name', 'telephone', 'niveau', 'societe')
+                 'last_name', 'telephone')
 
     def validate_telephone(self, value):
         pattern = r'^[67][0-9]{8}$'  # Numéro marocain valide : commence par 6 ou 7 et contient 9 chiffres au total
