@@ -53,9 +53,16 @@ class OrderItem(models.Model):
         Vérifie la disponibilité du stock avant de sauvegarder l'OrderItem.
         Assure que le prix est bien défini avant de sauvegarder.
         """
-        # Vérifier si le produit est disponible et si le stock est suffisant
-        if not self.product.available or self.product.stock < self.quantity:
-            raise ValueError(f"Le produit {self.product.name} n'est pas disponible en quantité suffisante. Stock actuel: {self.product.stock}")
+        # Vérifier si le produit est disponible
+        if not self.product.available:
+            raise ValueError(f"Le produit {self.product.name} n'est plus disponible.")
+
+        # Vérifier si le stock est suffisant
+        if self.product.stock < self.quantity:
+            raise ValueError(
+                f"Stock insuffisant pour {self.product.name}. "
+                f"Quantité demandée: {self.quantity}, Stock disponible: {self.product.stock}"
+            )
 
         # Assure que le prix est bien défini
         if not self.price:
@@ -63,6 +70,8 @@ class OrderItem(models.Model):
 
         # Mettre à jour le stock
         self.product.stock -= self.quantity
+        if self.product.stock == 0:
+            self.product.available = False
         self.product.save()
 
         super().save(*args, **kwargs)
