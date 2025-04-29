@@ -27,8 +27,18 @@ class Equipment(models.Model):
         return 0
 
     def save(self, *args, **kwargs):
-        """Met à jour le pourcentage de remise avant de sauvegarder l'objet."""
+        """
+        Met à jour le pourcentage de remise et la disponibilité avant de sauvegarder l'objet.
+        La disponibilité est automatiquement mise à jour en fonction du stock :
+        - Si stock > 0 : available = True
+        - Si stock = 0 : available = False
+        """
+        # Mise à jour du pourcentage de remise
         self.discount_percentage = self.calculate_discount()
+        
+        # Mise à jour de la disponibilité en fonction du stock
+        self.available = self.stock > 0
+        
         super().save(*args, **kwargs)
 
     @property
