@@ -16,7 +16,7 @@ class Equipment(models.Model):
     prix_barre = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Prix barré (facultatif)
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # Pourcentage de remise
     stock = models.IntegerField()
-    image_url = models.URLField(max_length=500, blank=True, null=True)  # URL de l'image du produit
+    image = models.ImageField(upload_to='equipments/', null=True, blank=True)  # Image du produit
     created_at = models.DateTimeField(auto_now_add=True)  # Date d'ajout du produit
     vendeur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='equipements')
 

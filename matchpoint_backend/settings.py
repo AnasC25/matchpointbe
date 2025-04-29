@@ -102,6 +102,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
 # ── 9. Internationalisation
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -113,21 +114,6 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Configuration HTTPS (uniquement en production)
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    USE_X_FORWARDED_HOST = True
-    USE_X_FORWARDED_PORT = True
-    SECURE_SSL_REDIRECT = True
-
 # ── 11. Autres
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "https://matchpointfront.vercel.app",
-    "https://bookish-space-carnival-v46qwgxr799fp64g-8000.app.github.dev",
-    "http://ec2-44-201-157-94.compute-1.amazonaws.com",
-    "https://api.matchpoint.ma"
-]

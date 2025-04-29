@@ -37,10 +37,5 @@ class TerrainSerializer(serializers.ModelSerializer):
         """
         request = self.context.get('request')
         if obj.image and hasattr(obj.image, 'url'):
-            url = request.build_absolute_uri(obj.image.url)
-            # Forcer HTTPS uniquement en production
-            if not request.get_host().startswith('localhost') and not request.get_host().startswith('127.0.0.1'):
-                if url.startswith('http://'):
-                    url = 'https://' + url[7:]
-            return url
+            return request.build_absolute_uri(obj.image.url)
         return None
