@@ -8,7 +8,6 @@ class Equipment(models.Model):
     sku = models.CharField(max_length=50, unique=True, blank=True, null=True)  # SKU du produit
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    quantity = models.IntegerField(default=1)
     available = models.BooleanField(default=True)
     brand = models.CharField(max_length=255)  # Marque du produit
     category = models.CharField(max_length=255)  # Catégorie du produit
