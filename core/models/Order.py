@@ -49,9 +49,22 @@ class OrderItem(models.Model):
         return f"{self.quantity} x {self.product.name} dans la commande {self.order.id}"
 
     def save(self, *args, **kwargs):
-        """ Assure que le prix est bien défini avant de sauvegarder l'OrderItem """
+        """
+        Vérifie la disponibilité du stock avant de sauvegarder l'OrderItem.
+        Assure que le prix est bien défini avant de sauvegarder.
+        """
+        # Vérifier si le produit est disponible et si le stock est suffisant
+        if not self.product.available or self.product.stock < self.quantity:
+            raise ValueError(f"Le produit {self.product.name} n'est pas disponible en quantité suffisante. Stock actuel: {self.product.stock}")
+
+        # Assure que le prix est bien défini
         if not self.price:
-            self.price = self.product.price  # Assigne le prix du produit s'il n'est pas défini
+            self.price = self.product.price
+
+        # Mettre à jour le stock
+        self.product.stock -= self.quantity
+        self.product.save()
+
         super().save(*args, **kwargs)
         self.order.calculate_total_price()  # Recalcule le prix total après chaque ajout/modification
 
