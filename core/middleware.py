@@ -1,5 +1,7 @@
 from django.http import HttpResponsePermanentRedirect
 from django.utils.http import escape_leading_slashes
+from django.middleware.csrf import CsrfViewMiddleware
+from django.conf import settings
 
 class SlashMiddleware:
     def __init__(self, get_response):
@@ -21,4 +23,11 @@ class SlashMiddleware:
                 escape_leading_slashes(request.get_full_path().replace(request.path_info, new_path))
             )
         
-        return self.get_response(request) 
+        return self.get_response(request)
+
+class DisableCSRFMiddleware(CsrfViewMiddleware):
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        # Désactiver CSRF pour les API REST
+        if request.path.startswith('/api/'):
+            return None
+        return super().process_view(request, callback, callback_args, callback_kwargs) 

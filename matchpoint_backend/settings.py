@@ -7,6 +7,13 @@ from dotenv import load_dotenv
 AUTH_USER_MODEL = 'core.CustomUser'
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://api.matchpoint.ma",
+    "https://matchpointfront.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
 
 # ── 1. Chemin vers la racine du projet
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +25,14 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-dev-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+
+# Configuration CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://api.matchpoint.ma",
+    "https://matchpointfront.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
 
 # ── 4. Applications installées
 INSTALLED_APPS = [
@@ -40,6 +55,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'core.middleware.DisableCSRFMiddleware',  # Middleware personnalisé pour désactiver CSRF pour les API
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
