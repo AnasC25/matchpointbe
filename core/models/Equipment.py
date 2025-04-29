@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from datetime import timedelta
+from django.conf import settings
 
 class Equipment(models.Model):
     id = models.AutoField(primary_key=True)  # ID incrémental
@@ -17,6 +18,7 @@ class Equipment(models.Model):
     stock = models.IntegerField()
     image_url = models.URLField(max_length=500, blank=True, null=True)  # URL de l'image du produit
     created_at = models.DateTimeField(auto_now_add=True)  # Date d'ajout du produit
+    vendeur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='equipements')
 
     def calculate_discount(self):
         """Calcule et met à jour le pourcentage de remise si un prix barré est défini."""

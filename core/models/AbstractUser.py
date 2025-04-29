@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from .Club import Club
 
 class CustomUserManager(BaseUserManager):
     """Gestionnaire personnalisé pour CustomUser"""
@@ -20,9 +21,21 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
-    telephone = models.CharField(max_length=15, blank=True, null=True)
+    """
+    Modèle utilisateur personnalisé étendant AbstractUser.
+    
+    Attributs:
+        telephone (CharField): Numéro de téléphone de l'utilisateur
+        niveau (CharField): Niveau sportif de l'utilisateur
+        societe (CharField): Société de l'utilisateur
+        club (ForeignKey): Club auquel l'utilisateur est associé
+        is_club_agent (BooleanField): Indique si l'utilisateur est un agent de club
+    """
+    telephone = models.CharField(max_length=20, blank=True, null=True)
     niveau = models.CharField(max_length=50, blank=True, null=True)
     societe = models.CharField(max_length=100, blank=True, null=True)
+    club = models.ForeignKey(Club, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')
+    is_club_agent = models.BooleanField(default=False)
 
     # Résolution du conflit avec les groupes et permissions
     groups = models.ManyToManyField(

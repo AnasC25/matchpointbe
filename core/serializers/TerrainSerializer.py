@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from core.models import Terrain
+from core.models import Terrain, Club
+
+class ClubSerializer(serializers.ModelSerializer):
+    """
+    Serializer pour le modèle Club.
+    """
+    class Meta:
+        model = Club
+        fields = ['id', 'nom', 'adresse', 'ville', 'telephone', 'email']
 
 class TerrainSerializer(serializers.ModelSerializer):
     """
@@ -10,10 +18,11 @@ class TerrainSerializer(serializers.ModelSerializer):
     price_per_hour = serializers.DecimalField(source='prix_par_heure', max_digits=6, decimal_places=2)
     features = serializers.ListField(source='caracteristiques')
     img_url = serializers.SerializerMethodField()
+    club = ClubSerializer(read_only=True)
 
     class Meta:
         model = Terrain
-        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 'disponible', 'discipline']
+        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 'disponible', 'discipline', 'club']
         read_only_fields = []  # Aucun champ en lecture seule pour permettre la modification de l'ID
 
     def get_img_url(self, obj):
@@ -28,5 +37,10 @@ class TerrainSerializer(serializers.ModelSerializer):
         """
         request = self.context.get('request')
         if obj.image and hasattr(obj.image, 'url'):
-            return request.build_absolute_uri(obj.image.url)
+            url = request.build_absolute_uri(obj.image.url)
+            # Forcer HTTPS uniquement en production
+            if not request.get_host().startswith('localhost') and not request.get_host().startswith('127.0.0.1'):
+                if url.startswith('http://'):
+                    url = 'https://' + url[7:]
+            return url
         return None

@@ -4,6 +4,7 @@ from .Reservation import Reservation
 from .Terrain import Terrain  # Importer Terrain depuis son nouveau fichier
 from .Order import Order
 from .Order import OrderItem  # Séparation pour éviter les conflits
+from .Club import Club
 
 __all__ = [
     'Equipment',
@@ -11,5 +12,6 @@ __all__ = [
     'Reservation',
     'Terrain',
     'Order',
-    'OrderItem'
+    'OrderItem',
+    'Club'
 ]

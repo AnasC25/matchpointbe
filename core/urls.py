@@ -18,7 +18,7 @@ router = DefaultRouter()
 router.register(r'equipment', EquipmentViewSet, basename="equipment")
 router.register(r'reservations', ReservationViewSet, basename="reservations")
 router.register(r'orders', OrderViewSet, basename='order')
-router.register(r'terrains', TerrainViewSet, basename='terrain')  # Ajout du TerrainViewSet
+router.register(r'terrains', TerrainViewSet, basename='terrain')
 
 # ✅ Définition des URLs
 urlpatterns = [
@@ -32,7 +32,6 @@ urlpatterns = [
 
     # 🔹 Endpoints API (ViewSets)
     path('api/', include(router.urls)),
-    
 ]
 
 # ✅ Servir les fichiers médias en mode développement

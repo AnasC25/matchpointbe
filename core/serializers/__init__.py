@@ -11,6 +11,6 @@ __all__ = [
     'ReservationSerializer',
     'OrderItemSerializer',
     'OrderDetailSerializer',
-    'OrderSerializer',
+    'OrderSerializer'
 ]
 

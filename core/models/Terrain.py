@@ -1,4 +1,5 @@
 from django.db import models
+from .Club import Club
 
 class Terrain(models.Model):
     """
@@ -13,6 +14,7 @@ class Terrain(models.Model):
         image (ImageField): Photo du terrain (optionnelle)
         disponible (BooleanField): Indique si le terrain est actuellement disponible
         discipline (CharField): Type de sport pratiqué sur le terrain
+        club (ForeignKey): Club auquel appartient le terrain
     """
     DISCIPLINE_CHOICES = [
         ('FOOTBALL_11', 'Football 11 vs 11'),
@@ -26,10 +28,11 @@ class Terrain(models.Model):
     nom = models.CharField(max_length=255)
     localisation = models.CharField(max_length=255)  # correspond à la ville
     prix_par_heure = models.DecimalField(max_digits=6, decimal_places=2)
-    caracteristiques = models.JSONField(default=list)  # ex: ["Éclairage", "Vestiaires"]
+    caracteristiques = models.JSONField(default=list, blank=True, null=True)  # ex: ["Éclairage", "Vestiaires"]
     image = models.ImageField(upload_to='terrains/', null=True, blank=True)
     disponible = models.BooleanField(default=True)
     discipline = models.CharField(max_length=20, choices=DISCIPLINE_CHOICES, default='FOOTBALL_11')
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='terrains')
 
     def __str__(self):
-        return f"{self.id} - {self.nom}" 
+        return f"{self.nom} ({self.club.nom})" 
