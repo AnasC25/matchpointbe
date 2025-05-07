@@ -39,7 +39,7 @@ class Reservation(models.Model):
             date (date): Date à vérifier
             
         Returns:
-            list: Liste des créneaux horaires avec leur statut
+            dict: Dictionnaire contenant la date et la liste des créneaux horaires
         """
         # Heures d'ouverture (à adapter selon vos besoins)
         start_hour = 8
@@ -59,16 +59,18 @@ class Reservation(models.Model):
                 terrain_id=terrain_id,
                 start_time__lte=current_time,
                 end_time__gt=current_time,
-                status__in=['reserved']
+                status='reserved'
             ).exists()
             
             slots.append({
-                'start_time': current_time,
-                'end_time': end_slot,
-                'is_reserved': is_reserved,
-                'status': 'reserved' if is_reserved else 'available'
+                'start': current_time.strftime('%H:%M'),
+                'end': end_slot.strftime('%H:%M'),
+                'status': 'Indisponible' if is_reserved else 'Disponible'
             })
             
             current_time = end_slot
             
-        return slots
+        return {
+            'date': date.strftime('%Y-%m-%d'),
+            'slots': slots
+        }
