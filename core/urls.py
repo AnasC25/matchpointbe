@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.http import JsonResponse
-from core.views import RegisterViewSet, ReservationViewSet     # On importe uniquement les vues qui existent
+from core.views import RegisterViewSet, ReservationViewSet, ReservationByDateView     # Ajout de ReservationByDateView
 from core.views import EquipmentViewSet
 from core.views.OrderViewSet import OrderViewSet  # Importez la classe, pas le module
 from core.views.TerrainViewSet import TerrainViewSet  # Import du TerrainViewSet
@@ -32,6 +32,9 @@ urlpatterns = [
 
     # 🔹 Endpoints API (ViewSets)
     path('api/', include(router.urls)),
+    
+    # 🔹 Endpoint pour les réservations par date
+    path('api/reservations/date/<str:date>/', ReservationByDateView.as_view(), name='reservations-by-date'),
 ]
 
 # ✅ Servir les fichiers médias en mode développement
