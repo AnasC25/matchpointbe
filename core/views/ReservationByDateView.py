@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from core.models import Reservation
-from datetime import datetime, time, timedelta
-from django.utils import timezone
+from datetime import datetime, time, timedelta, timezone
+from django.utils import timezone as dj_timezone  # pour get_current_timezone()
 
 class ReservationByDateView(APIView):
     """
@@ -25,7 +25,7 @@ class ReservationByDateView(APIView):
             slots = []
             current_time = datetime.combine(date_obj, time(hour=start_hour))
             # Rendre le datetime aware dans le fuseau local
-            current_time = current_time.replace(tzinfo=timezone.get_current_timezone())
+            current_time = current_time.replace(tzinfo=dj_timezone.get_current_timezone())
 
             while current_time.hour < end_hour:
                 end_time = current_time + timedelta(hours=slot_duration)
