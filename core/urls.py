@@ -8,7 +8,6 @@ from core.views import RegisterViewSet, ReservationViewSet     # On importe uniq
 from core.views import EquipmentViewSet
 from core.views.OrderViewSet import OrderViewSet  # Importez la classe, pas le module
 from core.views.TerrainViewSet import TerrainViewSet  # Import du TerrainViewSet
-from .views import ReservationByDateView, TerrainAvailabilityView
 
 # ✅ Fonction pour la page d'accueil
 def home_view(request):
@@ -33,9 +32,6 @@ urlpatterns = [
 
     # 🔹 Endpoints API (ViewSets)
     path('api/', include(router.urls)),
-
-    path('reservations/date/<str:date>/', ReservationByDateView.as_view(), name='reservations-by-date'),
-    path('reservations/terrain/<int:terrain_id>/availability/', TerrainAvailabilityView.as_view(), name='terrain-availability'),
 ]
 
 # ✅ Servir les fichiers médias en mode développement
