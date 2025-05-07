@@ -35,10 +35,9 @@ class ReservationByDateView(APIView):
                 reservations_qs = Reservation.objects.filter(
                     start_time__lt=end_time,
                     end_time__gt=current_time,
-                    status='confirmed'
+                    status='confirmed',
+                    terrain_id=terrain_id
                 )
-                if terrain_id:
-                    reservations_qs = reservations_qs.filter(terrain_id=terrain_id)
 
                 is_reserved = reservations_qs.exists()
                 status_str = "Indisponible" if is_reserved else "Disponible"
