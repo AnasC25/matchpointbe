@@ -4,8 +4,6 @@ from rest_framework import status
 from core.models import Reservation
 from datetime import datetime, time, timedelta
 from django.utils import timezone
-import pytz
-from django.utils.timezone import utc
 
 class ReservationByDateView(APIView):
     """
@@ -26,13 +24,13 @@ class ReservationByDateView(APIView):
             # Générer tous les créneaux horaires de la journée
             slots = []
             current_time = datetime.combine(date_obj, time(hour=start_hour))
-            # Correction zoneinfo : rendre le datetime aware
+            # Rendre le datetime aware dans le fuseau local
             current_time = current_time.replace(tzinfo=timezone.get_current_timezone())
 
             while current_time.hour < end_hour:
                 end_time = current_time + timedelta(hours=slot_duration)
 
-                # Convertir en UTC pour la comparaison
+                # Convertir en UTC pour la comparaison avec la base
                 current_time_utc = current_time.astimezone(timezone.utc)
                 end_time_utc = end_time.astimezone(timezone.utc)
 
@@ -40,9 +38,10 @@ class ReservationByDateView(APIView):
                 reservations_qs = Reservation.objects.filter(
                     start_time__lt=end_time_utc,
                     end_time__gt=current_time_utc,
-                    status='confirmed',
-                    terrain_id=terrain_id
+                    status='confirmed'
                 )
+                if terrain_id:
+                    reservations_qs = reservations_qs.filter(terrain_id=terrain_id)
 
                 is_reserved = reservations_qs.exists()
                 status_str = "Indisponible" if is_reserved else "Disponible"
