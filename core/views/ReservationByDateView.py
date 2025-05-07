@@ -44,7 +44,7 @@ class ReservationByDateView(APIView):
                     reservations_qs = reservations_qs.filter(terrain_id=terrain_id)
 
                 is_reserved = reservations_qs.exists()
-                status_str = "Indisponible" if is_reserved else "Disponible"
+                status_str = "Réservé" if is_reserved else "Disponible"
 
                 slots.append({
                     "start": current_time.strftime('%H:%M'),
