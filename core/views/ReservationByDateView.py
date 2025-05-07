@@ -5,6 +5,7 @@ from core.models import Reservation
 from datetime import datetime, time, timedelta
 from django.utils import timezone
 import pytz
+from django.utils.timezone import utc
 
 class ReservationByDateView(APIView):
     """
@@ -31,10 +32,14 @@ class ReservationByDateView(APIView):
             while current_time.hour < end_hour:
                 end_time = current_time + timedelta(hours=slot_duration)
 
+                # Convertir en UTC pour la comparaison
+                current_time_utc = current_time.astimezone(timezone.utc)
+                end_time_utc = end_time.astimezone(timezone.utc)
+
                 # Filtrer les réservations qui recouvrent ce créneau
                 reservations_qs = Reservation.objects.filter(
-                    start_time__lt=end_time,
-                    end_time__gt=current_time,
+                    start_time__lt=end_time_utc,
+                    end_time__gt=current_time_utc,
                     status='confirmed',
                     terrain_id=terrain_id
                 )
