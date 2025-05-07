@@ -49,4 +49,43 @@ class TerrainAvailabilityView(APIView):
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class ReservationByDateView(APIView):
+    """
+    Vue pour récupérer toutes les réservations confirmées pour une date donnée.
+    """
+    def get(self, request, date):
+        try:
+            # Convertir la date en objet datetime
+            date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+            
+            # Récupérer toutes les réservations confirmées pour cette date
+            reservations = Reservation.objects.filter(
+                start_time__date=date_obj,
+                status='confirmed'
+            ).select_related('terrain')
+            
+            # Formater la réponse
+            formatted_reservations = []
+            for reservation in reservations:
+                formatted_reservations.append({
+                    'id': reservation.id,
+                    'terrain': reservation.terrain.id,
+                    'start_time': reservation.start_time.isoformat(),
+                    'end_time': reservation.end_time.isoformat(),
+                    'status': reservation.status
+                })
+            
+            return Response(formatted_reservations)
+            
+        except ValueError:
+            return Response(
+                {'error': 'Format de date invalide. Utilisez YYYY-MM-DD'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             ) 

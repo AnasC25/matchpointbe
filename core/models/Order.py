@@ -26,6 +26,22 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')  # Statut de la commande
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # Prix total par défaut 0
 
+    # Informations de livraison
+    shipping_address = models.TextField()
+    shipping_city = models.CharField(max_length=100)
+    shipping_postal_code = models.CharField(max_length=10)
+    shipping_country = models.CharField(max_length=100)
+    shipping_phone = models.CharField(max_length=20)
+    shipping_email = models.EmailField()
+    
+    # Informations de paiement
+    payment_method = models.CharField(max_length=50)
+    payment_status = models.CharField(max_length=20, default='pending')
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Notes et commentaires
+    notes = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return f"Commande #{self.id} - {self.status}"
     
