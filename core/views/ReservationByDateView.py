@@ -25,8 +25,8 @@ class ReservationByDateView(APIView):
             # Générer tous les créneaux horaires de la journée
             slots = []
             current_time = datetime.combine(date_obj, time(hour=start_hour))
-            tz = timezone.get_current_timezone()
-            current_time = tz.localize(current_time)
+            # Correction zoneinfo : rendre le datetime aware
+            current_time = current_time.replace(tzinfo=timezone.get_current_timezone())
 
             while current_time.hour < end_hour:
                 end_time = current_time + timedelta(hours=slot_duration)
