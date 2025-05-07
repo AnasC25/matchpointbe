@@ -13,19 +13,18 @@ class Reservation(models.Model):
         terrain (ForeignKey): Terrain réservé
         start_time (DateTimeField): Date et heure de début
         end_time (DateTimeField): Date et heure de fin
-        status (CharField): État de la réservation (en attente/confirmée/annulée)
+        status (CharField): État de la réservation (réservé/annulé)
     """
     STATUT_CHOICES = [
-        ('pending', 'En attente'),
-        ('confirmed', 'Confirmée'),
-        ('cancelled', 'Annulée'),
+        ('reserved', 'Réservé'),
+        ('cancelled', 'Annulé'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     terrain = models.ForeignKey(Terrain, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    status = models.CharField(max_length=10, choices=STATUT_CHOICES, default='pending')
+    status = models.CharField(max_length=10, choices=STATUT_CHOICES, default='reserved')
 
     def __str__(self):
         return f"{self.user.username} - {self.terrain.nom} ({self.start_time} - {self.end_time})"
@@ -60,7 +59,7 @@ class Reservation(models.Model):
                 terrain_id=terrain_id,
                 start_time__lte=current_time,
                 end_time__gt=current_time,
-                status__in=['pending', 'confirmed']
+                status__in=['reserved']
             ).exists()
             
             slots.append({
