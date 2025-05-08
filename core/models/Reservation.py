@@ -43,7 +43,7 @@ class Reservation(models.Model):
         """
         # Heures d'ouverture (à adapter selon vos besoins)
         start_hour = 8
-        end_hour = 22
+        end_hour = 24
         
         # Créer une liste de tous les créneaux horaires de la journée
         slots = []
