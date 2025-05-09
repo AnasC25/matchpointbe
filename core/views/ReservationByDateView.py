@@ -21,7 +21,7 @@ class ReservationByDateView(APIView):
 
             # Définir les heures d'ouverture (modifiable selon vos besoins)
             start_hour = 8
-            end_hour = 22
+            end_hour = 24  # Modifié pour inclure jusqu'à minuit (24h00)
             slot_duration = 1  # en heures
 
             # Générer tous les créneaux horaires de la journée
