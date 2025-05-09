@@ -16,6 +16,12 @@ class Order(models.Model):
         ('cancelled', 'Annulé')
     ]
 
+    PAYMENT_METHOD_CHOICES = [
+        ('card', 'Carte bancaire'),
+        ('cash', 'Espèces'),
+        ('transfer', 'Virement')
+    ]
+
     # Champs du modèle Order
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -37,6 +43,7 @@ class Order(models.Model):
     # Informations de paiement
     payment_status = models.CharField(max_length=100, default='pending')
     payment_id = models.CharField(max_length=100, blank=True, null=True)
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='card')
     
     # Notes et commentaires
     notes = models.TextField(blank=True, null=True)

@@ -27,7 +27,13 @@ class TerrainAdmin(admin.ModelAdmin):
     list_display = ('id', 'nom', 'localisation', 'prix_par_heure', 'disponible', 'discipline', 'club')
     fields = ('id', 'nom', 'localisation', 'prix_par_heure', 'caracteristiques', 'image', 'disponible', 'discipline', 'club')
 
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'status', 'payment_method', 'payment_status', 'total_price', 'created_at')
+    list_filter = ('status', 'payment_method', 'payment_status')
+    search_fields = ('id', 'user__email', 'shipping_email')
+    readonly_fields = ('created_at', 'total_price')
+
 admin.site.register(Equipment)
 admin.site.register(Reservation)
-admin.site.register(Order)
 admin.site.register(OrderItem)

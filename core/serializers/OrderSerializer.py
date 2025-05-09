@@ -21,7 +21,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at']
+        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at', 'payment_method', 'payment_status']
         read_only_fields = ['user_id', 'total_price', 'status', 'created_at']
 
 
@@ -33,4 +33,4 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at']
+        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at', 'payment_method', 'payment_status', 'shipping_address', 'shipping_city', 'shipping_postal_code', 'shipping_country', 'shipping_phone', 'shipping_email', 'notes']
