@@ -29,14 +29,13 @@ class Order(models.Model):
     # Informations de livraison
     shipping_address = models.TextField()
     shipping_city = models.CharField(max_length=100)
-    shipping_postal_code = models.CharField(max_length=10)
+    shipping_postal_code = models.CharField(max_length=100)
     shipping_country = models.CharField(max_length=100)
-    shipping_phone = models.CharField(max_length=20)
+    shipping_phone = models.CharField(max_length=100)
     shipping_email = models.EmailField()
     
     # Informations de paiement
-    payment_method = models.CharField(max_length=50)
-    payment_status = models.CharField(max_length=20, default='pending')
+    payment_status = models.CharField(max_length=100, default='pending')
     payment_id = models.CharField(max_length=100, blank=True, null=True)
     
     # Notes et commentaires
