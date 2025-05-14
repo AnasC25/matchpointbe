@@ -31,12 +31,25 @@ class RegisterSerializer(serializers.ModelSerializer):
                  'last_name', 'telephone')
 
     def validate_telephone(self, value):
-        pattern = r'^[67][0-9]{8}$'  # Numéro marocain valide : commence par 6 ou 7 et contient 9 chiffres au total
+        # Nettoyer le numéro en enlevant tous les caractères non numériques
+        value = re.sub(r'\D', '', value)
+        
+        # Vérifier si le numéro commence par 212 et l'enlever si c'est le cas
+        if value.startswith('212'):
+            value = value[3:]
+            
+        # Vérifier si le numéro commence par 0 et l'enlever si c'est le cas
+        if value.startswith('0'):
+            value = value[1:]
+            
+        # Vérifier le format final (doit commencer par 6 ou 7 et avoir 9 chiffres)
+        pattern = r'^[67][0-9]{8}$'
         if not re.match(pattern, value):
             raise serializers.ValidationError(
-                "Le numéro doit être au format valide (ex: 612345678 ou 712345678)."
+                "Le numéro doit être au format valide (ex: 0612345678, 0712345678, 212612345678, 212712345678)."
             )
-        return f"+212{value[-9:]}"  # On garde uniquement les 9 derniers chiffres et on ajoute +212
+            
+        return f"+212{value}"  # Ajouter le préfixe international
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
