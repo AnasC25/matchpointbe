@@ -1,6 +1,13 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.core.validators import RegexValidator
 from .Club import Club
+
+# Validateur pour les numéros de téléphone marocains
+phone_validator = RegexValidator(
+    regex=r'^(?:(?:\+|00)212|0)[67]\d{8}$',
+    message="Le numéro de téléphone doit être au format : 0612345678, 0712345678, 212612345678 ou 212712345678"
+)
 
 class CustomUserManager(BaseUserManager):
     """Gestionnaire personnalisé pour CustomUser"""
@@ -31,7 +38,7 @@ class CustomUser(AbstractUser):
         club (ForeignKey): Club auquel l'utilisateur est associé
         is_club_agent (BooleanField): Indique si l'utilisateur est un agent de club
     """
-    telephone = models.CharField(max_length=20, blank=True, null=True)
+    telephone = models.CharField(max_length=20, blank=True, null=True, validators=[phone_validator])
     niveau = models.CharField(max_length=50, blank=True, null=True)
     societe = models.CharField(max_length=100, blank=True, null=True)
     club = models.ForeignKey(Club, on_delete=models.SET_NULL, null=True, blank=True, related_name='agents')

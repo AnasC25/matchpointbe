@@ -1,9 +1,15 @@
 # Importation des modules nécessaires 
 from django.db import models
 from django.conf import settings
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.utils import timezone
 from .Equipment import Equipment  # Assurez-vous que Equipment est bien défini dans le même dossier d'application
+
+# Validateur pour les numéros de téléphone marocains
+phone_validator = RegexValidator(
+    regex=r'^(?:(?:\+|00)212|0)[67]\d{8}$',
+    message="Le numéro de téléphone doit être au format : 0612345678, 0712345678, 212612345678 ou 212712345678"
+)
 
 # Modèle pour les commandes
 class Order(models.Model):
@@ -37,7 +43,7 @@ class Order(models.Model):
     shipping_city = models.CharField(max_length=100)
     shipping_postal_code = models.CharField(max_length=100)
     shipping_country = models.CharField(max_length=100)
-    shipping_phone = models.CharField(max_length=100)
+    shipping_phone = models.CharField(max_length=20, validators=[phone_validator])
     shipping_email = models.EmailField()
     
     # Informations de paiement
