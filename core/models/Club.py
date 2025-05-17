@@ -3,14 +3,6 @@ from django.db import models
 class Club(models.Model):
     """
     Modèle représentant un club sportif.
-    
-    Attributs:
-        nom (CharField): Nom du club
-        adresse (CharField): Adresse du club
-        ville (CharField): Ville où se trouve le club
-        telephone (CharField): Numéro de téléphone du club
-        email (EmailField): Adresse email du club
-        image (ImageField): Image du club
     """
     nom = models.CharField(max_length=255, unique=True)
     adresse = models.CharField(max_length=255)
