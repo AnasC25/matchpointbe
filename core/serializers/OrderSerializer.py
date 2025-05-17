@@ -16,21 +16,28 @@ class OrderItemSerializer(serializers.ModelSerializer):
 # Serializer pour les commandes
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(source='user', read_only=True)
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Order
-        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at', 'payment_method', 'payment_status']
-        read_only_fields = ['user_id', 'total_price', 'status', 'created_at']
+        fields = ['id', 'user', 'created_at', 'status', 'total_price', 'items', 'shipping_address', 'shipping_phone', 'payment_method']
+        read_only_fields = ['total_price']
 
 
 # Serializer détaillé pour les commandes avec articles
-class OrderDetailSerializer(serializers.ModelSerializer):
+class OrderDetailSerializer(OrderSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(source='user', read_only=True)
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    shipping_details = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Order
-        fields = ['id', 'user_id', 'items', 'total_price', 'status', 'created_at', 'payment_method', 'payment_status', 'shipping_address', 'shipping_city', 'shipping_postal_code', 'shipping_country', 'shipping_phone', 'shipping_email', 'notes']
+    class Meta(OrderSerializer.Meta):
+        fields = OrderSerializer.Meta.fields + ['shipping_details', 'payment_status', 'notes']
+
+    def get_shipping_details(self, obj):
+        return {
+            'address': obj.shipping_address,
+            'city': obj.shipping_city,
+            'postal_code': obj.shipping_postal_code,
+            'country': obj.shipping_country,
+            'phone': obj.shipping_phone,
+            'email': obj.shipping_email
+        }

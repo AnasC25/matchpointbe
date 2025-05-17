@@ -1,7 +1,7 @@
-from rest_framework import viewsets, permissions, filters
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions
 from core.models import Equipment
 from core.serializers.EquipmentSerializer import EquipmentSerializer
+from django_filters import rest_framework as filters
 
 
 # ✅ ViewSet pour l'équipement de padel avec filtres
@@ -11,7 +11,7 @@ class EquipmentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     # 🔹 Ajout du filtrage
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = ['category', 'brand', 'price', 'name']  # Filtres exacts
     search_fields = ['name', 'brand', 'category']  # Recherche partielle
     ordering_fields = ['price', 'name']  # Tri possible par prix et nom

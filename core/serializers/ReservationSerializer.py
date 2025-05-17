@@ -1,6 +1,8 @@
 # serializers.py
 from rest_framework import serializers
 from core.models import Terrain, Reservation
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 class TerrainSerializer(serializers.ModelSerializer):
     """
@@ -34,89 +36,49 @@ class TerrainSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    """
-    Serializer pour le modèle Reservation.
-    
-    Ce serializer gère la conversion des données de réservation en format JSON et vice versa.
-    Les champs 'user' et 'status' sont en lecture seule pour empêcher leur modification directe.
-    """
-    terrain = serializers.CharField()  # Définir explicitement le champ terrain
+    terrain = serializers.CharField()
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    status = serializers.HiddenField(default='pending')
 
     class Meta:
         model = Reservation
-        fields = ['id', 'user', 'terrain', 'start_time', 'end_time', 'status']
-        read_only_fields = ['user', 'status']  # L'utilisateur est automatiquement défini et le statut commence en 'pending'
+        fields = ['id', 'terrain', 'user', 'start_time', 'end_time', 'status']
+        read_only_fields = ['user', 'status']
 
     def validate_terrain(self, value):
-        """
-        Valide que le terrain existe dans la base de données.
-        
-        Args:
-            value: ID du terrain
-            
-        Returns:
-            Le terrain si il existe
-            
-        Raises:
-            serializers.ValidationError: Si le terrain n'existe pas
-        """
-        # Nettoyer l'ID si nécessaire (retirer le nom s'il est présent)
-        terrain_id = value.split(' - ')[0] if ' - ' in value else value
-        
         try:
-            terrain = Terrain.objects.get(id=terrain_id)
-            if not terrain.disponible:
-                raise serializers.ValidationError("Ce terrain n'est pas disponible pour le moment.")
+            terrain = Terrain.objects.get(id=value)
             return terrain
         except Terrain.DoesNotExist:
-            raise serializers.ValidationError(f"Le terrain avec l'ID '{terrain_id}' n'existe pas.")
+            raise serializers.ValidationError("Terrain non trouvé")
 
     def validate(self, data):
-        """
-        Valide qu'il n'y a pas de chevauchement de réservations pour le même terrain.
-        
-        Args:
-            data: Données de la réservation
-            
-        Returns:
-            Les données validées
-            
-        Raises:
-            serializers.ValidationError: Si un chevauchement est détecté
-        """
-        terrain = data.get('terrain')
         start_time = data.get('start_time')
         end_time = data.get('end_time')
+        terrain = data.get('terrain')
 
-        # Vérifier les chevauchements avec les réservations existantes
+        if start_time >= end_time:
+            raise serializers.ValidationError("L'heure de fin doit être après l'heure de début")
+
+        if start_time < timezone.now():
+            raise serializers.ValidationError("Impossible de réserver dans le passé")
+
+        if (end_time - start_time) > timedelta(hours=2):
+            raise serializers.ValidationError("La réservation ne peut pas dépasser 2 heures")
+
         overlapping_reservations = Reservation.objects.filter(
             terrain=terrain,
-            status__in=['pending', 'confirmed'],  # Ne vérifier que les réservations actives
-            start_time__lte=end_time,  # Changé de lt à lte pour inclure les chevauchements exacts
-            end_time__gte=start_time   # Changé de gt à gte pour inclure les chevauchements exacts
-        ).exclude(
-            # Exclure les cas où la nouvelle réservation commence exactement à la fin d'une autre
-            end_time=start_time
-        ).exclude(
-            # Exclure les cas où la nouvelle réservation se termine exactement au début d'une autre
-            start_time=end_time
-        )
-
-        # Vérifier les réservations qui commencent exactement à la même heure
-        same_start_time = Reservation.objects.filter(
-            terrain=terrain,
             status__in=['pending', 'confirmed'],
-            start_time=start_time
+            start_time__lte=end_time,
+            end_time__gte=start_time
         )
 
-        if overlapping_reservations.exists() or same_start_time.exists():
-            raise serializers.ValidationError(
-                "Ce créneau horaire est déjà réservé pour ce terrain. Veuillez choisir un autre créneau."
-            )
+        if overlapping_reservations.exists():
+            raise serializers.ValidationError("Ce créneau est déjà réservé")
 
         return data
 
     def create(self, validated_data):
-        # Définir automatiquement l'utilisateur comme l'utilisateur connecté
-        validated_data['user'] = self.context['request'].user
+        user = self.context['request'].user
+        validated_data['user'] = user
         return super().create(validated_data)

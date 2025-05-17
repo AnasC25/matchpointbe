@@ -1,6 +1,5 @@
-import os
 from pathlib import Path
-from datetime import timedelta
+import os
 from dotenv import load_dotenv
 
 # ✅ Utilisation de CustomUser comme modèle utilisateur
@@ -22,16 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 # ── 3. Secret key et debug depuis l'env
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-dev-key')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['*']
 
 # Configuration CSRF
 CSRF_TRUSTED_ORIGINS = [
-    "https://api.matchpoint.ma",
-    "https://matchpointfront.vercel.app",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 # ── 4. Applications installées
@@ -44,22 +43,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'django_filters',
-    'corsheaders',
+    'channels',
     'core',
 ]
 
 # ── 5. Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'core.middleware.DisableCSRFMiddleware',  # Middleware personnalisé pour désactiver CSRF pour les API
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.SlashMiddleware',
+    'core.middleware.DisableCSRFMiddleware',  # Middleware personnalisé pour désactiver CSRF pour les API
 ]
 
 ROOT_URLCONF = 'matchpoint_backend.urls'
@@ -68,7 +66,7 @@ ROOT_URLCONF = 'matchpoint_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,14 +80,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'matchpoint_backend.wsgi.application'
+ASGI_APPLICATION = 'matchpoint_backend.asgi.application'
 
 # ── 7. Django REST Framework & JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
@@ -116,16 +115,38 @@ DATABASES = {
 }
 
 # ── 9. Internationalisation
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'fr-fr'
+TIME_ZONE = 'Africa/Casablanca'
 USE_I18N = True
 USE_TZ = True
 
 # ── 10. Static & Media
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ── 11. Autres
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}

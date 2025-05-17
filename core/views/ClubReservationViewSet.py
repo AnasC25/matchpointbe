@@ -1,13 +1,6 @@
 from rest_framework import viewsets, permissions
-from core.models import Reservation, Terrain
+from core.models import Reservation
 from core.serializers.ReservationSerializer import ReservationSerializer
-
-class IsClubAgent(permissions.BasePermission):
-    """
-    Permission personnalisée pour vérifier si l'utilisateur est un agent de club.
-    """
-    def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_club_agent
 
 class ClubReservationViewSet(viewsets.ModelViewSet):
     """
@@ -20,16 +13,14 @@ class ClubReservationViewSet(viewsets.ModelViewSet):
     - Supprimer les réservations
     """
     serializer_class = ReservationSerializer
-    permission_classes = [permissions.IsAuthenticated, IsClubAgent]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """
-        Retourne uniquement les réservations des terrains appartenant au club de l'agent.
-        """
-        # Récupérer les terrains du club de l'agent
-        club_terrains = Terrain.objects.filter(club=self.request.user.club)
+        user = self.request.user
+        if not hasattr(user, 'club'):
+            return Reservation.objects.none()
         
-        # Retourner les réservations de ces terrains
+        club_terrains = user.club.terrains.all()
         return Reservation.objects.filter(terrain__in=club_terrains)
 
     def perform_create(self, serializer):

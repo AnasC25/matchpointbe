@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Equipment      
+from core.models import Equipment
 
 # ✅ Serializer pour l'équipement
 class EquipmentSerializer(serializers.ModelSerializer):
@@ -7,9 +7,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Equipment
-        fields = ['id', 'sku', 'name', 'description', 'available', 
-                 'brand', 'category', 'price', 'prix_barre', 'discount_percentage', 
-                 'stock', 'image_url', 'created_at', 'vendeur']
+        fields = ['id', 'name', 'description', 'price', 'prix_barre', 'stock', 'available', 'brand', 'category', 'image_url']
 
     def get_image_url(self, obj):
         """
