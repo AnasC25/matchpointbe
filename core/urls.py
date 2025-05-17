@@ -8,6 +8,7 @@ from core.views import RegisterViewSet, ReservationViewSet, ReservationByDateVie
 from core.views import EquipmentViewSet
 from core.views.OrderViewSet import OrderViewSet  # Importez la classe, pas le module
 from core.views.TerrainViewSet import TerrainViewSet  # Import du TerrainViewSet
+from core.views.ClubViewSet import ClubViewSet
 
 # ✅ Fonction pour la page d'accueil
 def home_view(request):
@@ -19,6 +20,7 @@ router.register(r'equipment', EquipmentViewSet, basename="equipment")
 router.register(r'reservations', ReservationViewSet, basename="reservations")
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'terrains', TerrainViewSet, basename='terrain')
+router.register(r'clubs', ClubViewSet, basename='club')
 
 # ✅ Définition des URLs
 urlpatterns = [

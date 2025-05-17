@@ -5,8 +5,16 @@ from core.models import CustomUser, Equipment, Reservation, Terrain, Order, Orde
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
     list_display = ('nom', 'ville', 'telephone', 'email')
-    search_fields = ('nom', 'ville', 'email')
     list_filter = ('ville',)
+    search_fields = ('nom', 'ville', 'email')
+    fieldsets = (
+        ('Informations principales', {
+            'fields': ('nom', 'image')
+        }),
+        ('Contact', {
+            'fields': ('adresse', 'ville', 'telephone', 'email')
+        }),
+    )
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):

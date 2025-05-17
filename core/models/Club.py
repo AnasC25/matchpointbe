@@ -10,12 +10,14 @@ class Club(models.Model):
         ville (CharField): Ville où se trouve le club
         telephone (CharField): Numéro de téléphone du club
         email (EmailField): Adresse email du club
+        image (ImageField): Image du club
     """
     nom = models.CharField(max_length=255, unique=True)
     adresse = models.CharField(max_length=255)
     ville = models.CharField(max_length=255)
     telephone = models.CharField(max_length=20)
     email = models.EmailField()
+    image = models.ImageField(upload_to='clubs/', null=True, blank=True)
 
     def __str__(self):
         return self.nom 
