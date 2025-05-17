@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # ✅ Utilisation de CustomUser comme modèle utilisateur
 AUTH_USER_MODEL = 'core.CustomUser'

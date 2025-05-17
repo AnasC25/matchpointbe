@@ -21,7 +21,8 @@ router.register(r'clubs', ClubViewSet, basename='club')
 
 urlpatterns = [
     path('', home, name='home'),
-    path('api/token/', include('rest_framework_simplejwt.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', RegisterViewSet.as_view(), name='register'),
     path('api/', include(router.urls)),
     path('api/reservations/by-date/', ReservationByDateView.as_view(), name='reservations-by-date'),
