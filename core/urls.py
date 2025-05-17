@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from core.views import RegisterViewSet, ReservationViewSet, ReservationByDateView
 from core.views.OrderViewSet import OrderViewSet
 from core.views.TerrainViewSet import TerrainViewSet
@@ -11,7 +11,7 @@ from core.views.EquipmentViewSet import EquipmentViewSet
 from core.views.ClubViewSet import ClubViewSet
 
 def home(request):
-    return HttpResponse("Bienvenue sur l'API MatchPoint!")
+    return HttpResponse("OK")
 
 router = DefaultRouter()
 router.register(r'orders', OrderViewSet, basename='order')

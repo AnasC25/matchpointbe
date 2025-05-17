@@ -57,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.SlashMiddleware',
     'core.middleware.DisableCSRFMiddleware',  # Middleware personnalisé pour désactiver CSRF pour les API
 ]
 
@@ -110,8 +109,12 @@ load_dotenv()  # Charge les variables depuis .env
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -129,7 +132,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ── 11. Autres
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-APPEND_SLASH = False
+APPEND_SLASH = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {

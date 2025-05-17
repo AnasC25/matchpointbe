@@ -47,14 +47,14 @@ APPEND_SLASH = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.SlashMiddleware',  # Vérifie bien son existence
+    'core.middleware.DisableCSRFMiddleware',  # Middleware pour désactiver CSRF pour les API
 ]
 
 INSTALLED_APPS = [
@@ -77,3 +77,7 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
+
+# ── 11. Autres
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
