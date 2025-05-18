@@ -4,7 +4,7 @@ from .Reservation import Reservation
 from .Terrain import Terrain
 from .Order import Order
 from .Order import OrderItem
-from .Club import Club
+from .Club import Club, Discipline
 
 __all__ = [
     'Equipment',
@@ -13,5 +13,6 @@ __all__ = [
     'Terrain',
     'Order',
     'OrderItem',
-    'Club'
+    'Club',
+    'Discipline'
 ]

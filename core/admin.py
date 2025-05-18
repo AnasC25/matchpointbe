@@ -1,15 +1,21 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from core.models import CustomUser, Equipment, Reservation, Terrain, Order, OrderItem, Club
+from core.models import CustomUser, Equipment, Reservation, Terrain, Order, OrderItem, Club, Discipline
+
+@admin.register(Discipline)
+class DisciplineAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'description')
+    search_fields = ('nom',)
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'ville', 'telephone', 'email', 'discipline')
-    list_filter = ('ville', 'discipline')
+    list_display = ('nom', 'ville', 'telephone', 'email')
+    list_filter = ('ville', 'disciplines')
     search_fields = ('nom', 'ville', 'email')
+    filter_horizontal = ('disciplines',)
     fieldsets = (
         ('Informations principales', {
-            'fields': ('nom', 'image', 'discipline')
+            'fields': ('nom', 'image', 'disciplines')
         }),
         ('Contact', {
             'fields': ('adresse', 'ville', 'telephone', 'email')
