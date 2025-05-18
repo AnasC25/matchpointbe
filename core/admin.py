@@ -4,12 +4,12 @@ from core.models import CustomUser, Equipment, Reservation, Terrain, Order, Orde
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'ville', 'telephone', 'email')
-    list_filter = ('ville',)
+    list_display = ('nom', 'ville', 'telephone', 'email', 'discipline')
+    list_filter = ('ville', 'discipline')
     search_fields = ('nom', 'ville', 'email')
     fieldsets = (
         ('Informations principales', {
-            'fields': ('nom', 'image')
+            'fields': ('nom', 'image', 'discipline')
         }),
         ('Contact', {
             'fields': ('adresse', 'ville', 'telephone', 'email')
