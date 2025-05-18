@@ -1,5 +1,5 @@
 import django_filters
-from .models import Terrain
+from .models import Terrain, Discipline
 
 class TerrainFilter(django_filters.FilterSet):
     nom = django_filters.CharFilter(lookup_expr='icontains')
@@ -7,7 +7,7 @@ class TerrainFilter(django_filters.FilterSet):
     prix_par_heure__lte = django_filters.NumberFilter(field_name='prix_par_heure', lookup_expr='lte')
     prix_par_heure__gte = django_filters.NumberFilter(field_name='prix_par_heure', lookup_expr='gte')
     disponible = django_filters.BooleanFilter()
-    discipline = django_filters.ChoiceFilter(choices=Terrain.DISCIPLINE_CHOICES)
+    discipline = django_filters.ModelChoiceFilter(queryset=Discipline.objects.all())
 
     class Meta:
         model = Terrain

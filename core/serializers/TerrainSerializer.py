@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from core.models import Terrain, Club
+from core.models import Terrain, Club, Discipline
+
+class DisciplineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Discipline
+        fields = ['id', 'nom', 'description']
 
 class ClubSerializer(serializers.ModelSerializer):
     """
@@ -19,11 +24,18 @@ class TerrainSerializer(serializers.ModelSerializer):
     features = serializers.ListField(source='caracteristiques')
     img_url = serializers.SerializerMethodField()
     club = ClubSerializer(read_only=True)
+    discipline = DisciplineSerializer(read_only=True)
+    discipline_id = serializers.PrimaryKeyRelatedField(
+        queryset=Discipline.objects.all(),
+        write_only=True,
+        source='discipline'
+    )
 
     class Meta:
         model = Terrain
-        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 'disponible', 'discipline', 'club']
-        read_only_fields = []  # Aucun champ en lecture seule pour permettre la modification de l'ID
+        fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 
+                 'disponible', 'discipline', 'discipline_id', 'club']
+        read_only_fields = []
 
     def get_img_url(self, obj):
         """
