@@ -4,7 +4,8 @@ from .Reservation import Reservation
 from .Terrain import Terrain
 from .Order import Order
 from .Order import OrderItem
-from .Club import Club, Discipline
+from .Club import Club
+from .Discipline import Discipline
 
 __all__ = [
     'Equipment',
