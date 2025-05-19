@@ -15,7 +15,7 @@ class ClubViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nom', 'ville']
     ordering_fields = ['nom', 'ville']
-    filterset_fields = ['ville']
+    filterset_fields = ['ville', 'disciplines']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
