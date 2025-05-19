@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'channels',
     'core',
+    'django_filters',
 ]
 
 # ── 5. Middleware
