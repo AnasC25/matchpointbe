@@ -6,10 +6,11 @@ from datetime import timedelta
 # ✅ Utilisation de CustomUser comme modèle utilisateur
 AUTH_USER_MODEL = 'core.CustomUser'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# ✅ CORS CONFIGURATION
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    "https://matchpoint-beta.vercel.app/",
+    "https://matchpoint-beta.vercel.app",
     "https://api.matchpoint.ma",
     "http://localhost:3000",
     "http://127.0.0.1:3000"
@@ -26,9 +27,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['*']
 
-# Configuration CSRF
+# ✅ Configuration CSRF
 CSRF_TRUSTED_ORIGINS = [
-    'https://matchpoint-beta.vercel.app/',
+    'https://matchpoint-beta.vercel.app',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:8000',
@@ -37,6 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 # ── 4. Applications installées
 INSTALLED_APPS = [
+    'corsheaders',  # ✅ Ajouté pour CORS
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
 
 # ── 5. Middleware
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # ✅ Doit être tout en haut
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.DisableCSRFMiddleware',  # Middleware personnalisé pour désactiver CSRF pour les API
+    'core.middleware.DisableCSRFMiddleware',
 ]
 
 ROOT_URLCONF = 'matchpoint_backend.urls'
@@ -106,8 +109,6 @@ SIMPLE_JWT = {
 }
 
 # ── 8. Base de données
-load_dotenv()  # Charge les variables depuis .env
-
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
