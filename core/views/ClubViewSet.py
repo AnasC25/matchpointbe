@@ -1,5 +1,5 @@
 from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from ..models.Club import Club
 from ..serializers.ClubSerializer import ClubSerializer
 
@@ -10,7 +10,13 @@ class ClubViewSet(viewsets.ModelViewSet):
     """
     queryset = Club.objects.all()
     serializer_class = ClubSerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nom', 'ville']
-    ordering_fields = ['nom', 'ville'] 
+    ordering_fields = ['nom', 'ville']
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes] 
