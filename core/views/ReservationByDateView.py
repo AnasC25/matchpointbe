@@ -25,7 +25,7 @@ class ReservationByDateView(APIView):
             )
 
         start_hour = 8
-        end_hour = 24
+        end_hour = 23
         slot_duration = 1
 
         slots = []
@@ -33,7 +33,7 @@ class ReservationByDateView(APIView):
             datetime.combine(date_obj, datetime.min.time().replace(hour=start_hour))
         )
         end_time = timezone.make_aware(
-            datetime.combine(date_obj, datetime.min.time().replace(hour=end_hour))
+            datetime.combine(date_obj, datetime.min.time().replace(hour=end_hour, minute=59))
         )
 
         while current_time < end_time:
