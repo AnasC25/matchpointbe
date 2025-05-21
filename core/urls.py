@@ -27,8 +27,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', RegisterViewSet.as_view(), name='register'),
-    path('api/', include(router.urls)),
     path('api/reservations/by-date/', ReservationByDateView.as_view(), name='reservations-by-date'),
+    path('api/', include(router.urls)),
 ]
 
 if settings.DEBUG:
