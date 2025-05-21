@@ -16,8 +16,28 @@ class ReservationByDateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if not terrain_id:
+            return Response(
+                {'error': 'Le paramètre terrain_id est requis'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            # Vérifier si le terrain existe
+            terrain = Terrain.objects.get(id=terrain_id)
+        except Terrain.DoesNotExist:
+            return Response(
+                {'error': f'Terrain avec l\'ID {terrain_id} non trouvé'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         try:
             date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
+            if date_obj < timezone.now().date():
+                return Response(
+                    {'error': 'La date ne peut pas être dans le passé'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         except ValueError:
             return Response(
                 {'error': 'Format de date invalide. Utilisez YYYY-MM-DD'},
@@ -36,20 +56,29 @@ class ReservationByDateView(APIView):
             datetime.combine(date_obj, datetime.min.time().replace(hour=end_hour, minute=59))
         )
 
+        # Récupérer toutes les réservations pour cette date et ce terrain
+        existing_reservations = Reservation.objects.filter(
+            terrain_id=terrain_id,
+            start_time__date=date_obj,
+            status__in=['reserved', 'confirmed']
+        ).values_list('start_time', flat=True)
+
+        # Convertir les heures de réservation en set pour une recherche plus rapide
+        reserved_hours = {dt.hour for dt in existing_reservations}
+
         while current_time < end_time:
             slot_end = current_time + timedelta(hours=slot_duration)
-            is_available = not Reservation.objects.filter(
-                terrain_id=terrain_id if terrain_id else models.F('terrain_id'),
-                start_time__date=date_obj,
-                start_time__hour=current_time.hour,
-                status='reserved'
-            ).exists()
+            is_available = current_time.hour not in reserved_hours
 
             slots.append({
-                'start_time': current_time,
-                'end_time': slot_end,
-                'available': is_available
+                'start_time': current_time.strftime('%H:%M'),
+                'end_time': slot_end.strftime('%H:%M'),
+                'available': 'false' if not is_available else 'true'
             })
             current_time = slot_end
 
-        return Response(slots) 
+        return Response({
+            'terrain_id': terrain_id,
+            'date': date_str,
+            'slots': slots
+        }) 
