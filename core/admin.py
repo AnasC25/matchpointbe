@@ -38,8 +38,8 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Terrain)
 class TerrainAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nom', 'localisation', 'prix_par_heure', 'disponible', 'discipline', 'club')
-    fields = ('id', 'nom', 'localisation', 'prix_par_heure', 'caracteristiques', 'image', 'disponible', 'discipline', 'club')
+    list_display = ('id', 'nom', 'localisation', 'prix_par_heure', 'discipline', 'club')
+    fields = ('id', 'nom', 'localisation', 'prix_par_heure', 'caracteristiques', 'image','discipline', 'club')
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

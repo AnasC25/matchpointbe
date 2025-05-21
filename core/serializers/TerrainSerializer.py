@@ -12,7 +12,7 @@ class ClubSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Club
-        fields = ['id', 'nom', 'adresse', 'ville', 'telephone', 'email']
+        fields = ['id', 'nom', 'ville']
 
 class TerrainSerializer(serializers.ModelSerializer):
     """
@@ -34,7 +34,7 @@ class TerrainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Terrain
         fields = ['id', 'nom', 'localisation', 'price_per_hour', 'features', 'img_url', 
-                 'disponible', 'discipline', 'discipline_id', 'club']
+                 'discipline', 'discipline_id', 'club']
         read_only_fields = []
 
     def get_img_url(self, obj):
