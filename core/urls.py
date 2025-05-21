@@ -9,6 +9,7 @@ from core.views.OrderViewSet import OrderViewSet
 from core.views.TerrainViewSet import TerrainViewSet
 from core.views.EquipmentViewSet import EquipmentViewSet
 from core.views.ClubViewSet import ClubViewSet
+from core.views.ClubReservationViewSet import ClubReservationViewSet
 
 def home(request):
     return HttpResponse("OK")
@@ -18,6 +19,8 @@ router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'terrains', TerrainViewSet, basename='terrain')
 router.register(r'equipment', EquipmentViewSet, basename='equipment')
 router.register(r'clubs', ClubViewSet, basename='club')
+router.register(r'reservations', ReservationViewSet, basename='reservation')
+router.register(r'club-reservations', ClubReservationViewSet, basename='club-reservation')
 
 urlpatterns = [
     path('', home, name='home'),
