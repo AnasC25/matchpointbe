@@ -60,7 +60,7 @@ class ReservationByDateView(APIView):
         existing_reservations = Reservation.objects.filter(
             terrain_id=terrain_id,
             start_time__date=date_obj,
-            status__in=['reserved', 'confirmed']
+            status__in=['pending', 'confirmed']
         ).values_list('start_time', flat=True)
 
         # Convertir les heures de réservation en set pour une recherche plus rapide
