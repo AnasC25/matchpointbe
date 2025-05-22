@@ -13,7 +13,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://matchpoint-beta.vercel.app",
     "https://api.matchpoint.ma",
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://appli.matchpoint.ma"
 ]
 
 # ── 1. Chemin vers la racine du projet

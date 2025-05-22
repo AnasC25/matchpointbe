@@ -17,7 +17,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://matchpoint-beta.vercel.app",
     "http://matchpoint-beta.vercel.app",
     "http://ec2-44-201-157-94.compute-1.amazonaws.com",
-    "https://api.matchpoint.ma"
+    "https://api.matchpoint.ma",
+    "https://appli.matchpoint.ma"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -33,7 +34,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://matchpoint-beta.vercel.app",
     "http://ec2-44-201-157-94.compute-1.amazonaws.com",
-    "https://api.matchpoint.ma"
+    "https://api.matchpoint.ma",
+    "https://appli.matchpoint.ma"
 ]
 
 # ───── Middleware ─────
